@@ -23,8 +23,8 @@ class Size(models.Model):
     
 class ProductSize(models.Model):
     product = models.ForeignKey(to='Product', on_delete=models.CASCADE,
-                                related_name = 'product_size', verbose_name = 'Product productsize')
-    size = models.ForeignKey(to = Size, on_delete = models.CASCADE, related_name = 'size_product',
+                                related_name = 'product_sizes', verbose_name = 'Product productsize')
+    size = models.ForeignKey(to = Size, on_delete = models.CASCADE, related_name = 'size_products',
                              verbose_name = 'Size productsize')
     stock = models.PositiveIntegerField(default = 0, verbose_name = 'Stock productsize')
 
@@ -38,7 +38,7 @@ class Product(models.Model):
     category = models.ForeignKey(to=Category, on_delete = models.CASCADE, 
                                  related_name = 'products', verbose_name = 'Category product')
     color = models.CharField(max_length = 100, verbose_name = 'Color product')
-    price = models.DecimalField(max_digits = 10, decimal_places = 2, verbose_name = 'Price')
+    price = models.DecimalField(max_digits = 10, decimal_places = 2, verbose_name = 'Price product')
     description = models.TextField(blank=True, max_length=1000)
     main_image = models.ImageField(upload_to='products/main/', verbose_name='Image product')
     created_at = models.DateTimeField(auto_now_add = True, verbose_name = 'Created at product')    
@@ -53,4 +53,8 @@ class Product(models.Model):
          return self.name
     
 
-#class ProductImage(models.Model):
+class ProductImage(models.Model):
+    product = models.ForeignKey(to = Product, on_delete = models.CASCADE,
+                                related_name = 'images', verbose_name = 'Product productimage')
+    image = models.ImageField(upload_to='products/extra/', verbose_name = 'Image productimage')
+
