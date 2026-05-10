@@ -4,7 +4,7 @@ from django.utils.text import slugify
 
 class Category(models.Model):
     name = models.CharField(max_length = 100)
-    slug = models.CharField(max_length = 100, uniques = True)
+    slug = models.CharField(max_length = 100, unique = True)
 
     def same(self, *args, **kwargs):
         if not self.slug:
