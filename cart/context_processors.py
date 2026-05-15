@@ -1,7 +1,7 @@
 from .models import Cart
 
 def cart_processor(request):
-    if not request.cart.session_key:
+    if not request.session.session_key:
         request.session.create()
 
     cart, created = Cart.objects.get_or_create(
