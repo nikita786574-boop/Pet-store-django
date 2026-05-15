@@ -32,6 +32,29 @@ class Cart(models.Model):
             cart_item.quantity += quantity
             cart_item.save()
         return cart_item
+    
+    def remove_item(self, item_id):
+        try:
+            item = self.items.get(id=item_id)
+            item.delete()
+            return True
+        except CartItem.DoesNotExist:
+            return False
+    
+    def update_item_quantity(self, item_id, quantity):
+        try:
+            item = self.items.get(id=item_id)
+            if quantity > 0:
+                item.quantity = quantity
+                item.save()
+            else:
+                item.delete()
+            return True
+        except CartItem.DoesNotExist:
+            return False
+    
+    def clear(self):
+        self.items.all().delete()
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, related_name = 'items', on_delete=models.CASCADE)
