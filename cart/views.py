@@ -143,3 +143,19 @@ class CartCountView(CartMixin, View):
             'subtotal': float(cart.subtotal),
         })
 
+class ClearCartView(CartMixin, View):
+    def post(self, request):
+        cart = self.get_cart(request)
+        cart.clear()
+
+        request.session['cart_id'] = cart.id
+        request.modified = True
+        if request.headers.get('HX-Request'):
+            return TemplateResponse(request, 'cart/cart_empty.html', {
+                'cart':cart
+            })
+        return JsonResponse({
+            'success': True,
+            'message': 'Cart cleared'
+        })
+class CartSummaryView
