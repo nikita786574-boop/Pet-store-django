@@ -127,7 +127,7 @@ class RemoveCartItemView(CartMixin, View):
                 'cart_items': cart.items.select_related(
                     'product',
                     'product_size__size'
-                ).order_by('added_at')
+                ).order_by('-added_at')
             }
             return TemplateResponse(request, 'cart/cart_model.html')
         except CartItem.DoesNotExist:
@@ -158,4 +158,16 @@ class ClearCartView(CartMixin, View):
             'success': True,
             'message': 'Cart cleared'
         })
-class CartSummaryView
+    
+class CartSummaryView(CartMixin, View):
+    def get(self, request):
+        cart = self.get_cart(request)
+        context = {
+            'cart':cart,
+            'cart_items': cart.items.select_related(
+                'product',
+                'product_size__size',
+            ).order_by('-added_at')
+        }
+        return TemplateResponse(request, 'cart/cart_summary.html', context)
+    
