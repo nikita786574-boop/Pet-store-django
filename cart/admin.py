@@ -15,3 +15,11 @@ class CartAdmin(admin.ModelAdmin):
     search_fields = ('session_key',)  
     inlines = [CartItemInline]
     readonly_fields = ('total_items', 'subtotal')
+
+@admin.register(CartItem)
+class CartItemAdmin(admin.ModelAdmin):
+    list_display = ('cart', 'product', 'product_size',
+                    'quantity','total_price','added_at')
+    list_filter = ('added_at',)
+    search_fields = ('product__name', 'cart__session_key')
+    readonly_fields = ('total_price',)
