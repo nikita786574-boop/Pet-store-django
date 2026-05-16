@@ -84,3 +84,32 @@ class AddToCartView(CartMixin, View):
                 'message':f"{product.name} был добавлен в корзину.",
                 'cart_item_id': cart_item.id
             })
+        
+class UpdateCartItemView(CartMixin, View):
+    @transaction.atomic 
+    def post(self, request, item_id):
+        cart = self.get_cart(request)
+        cart_item = get_object_or_404(CartItem, id=item_id, cart=cart)
+
+        quantity = int(request.POST.get('quantity', 1))
+        if quantity < 0:
+            return JsonResponse({
+                'error': 'Invalid quantity'
+            }, status = 400)
+        if quantity == 0:
+            cart_item.delete()
+        else:
+            if quantity > cart_item.product_size.stock:
+                return JsonResponse({
+                    'error':f'Only {cart_item.product_size.stock} items avaliable'
+                }, status = 400)
+            cart_item.quantity = quantity
+            cart_item.save()
+        request.session['cart_id'] = cart.id
+        request.session.modified = True
+
+        context = {
+            'cart':cart,
+            'cart_items': cart.items.select_related('product', 'product__size__size').order_by('-added_at')
+        }
+        return TemplateResponse(request, 'cart/cart_modal.html', context=context)
